@@ -1,9 +1,193 @@
-"use strict";
-function aficherForemAjouterPerson() {
-    let AjouterData = document.querySelector("#AjouterData");
-    AjouterData.classList.replace("hidden", "flex");
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { createProfile, listPerson, checkImageURL, addToZone, canAccess } from './model.js';
+export function aficherForemAjouterPerson() {
+    const AjouterData = document.querySelector("#AjouterData");
+    if (!AjouterData)
+        return;
+    AjouterData.classList.remove("hidden");
+    AjouterData.classList.add("flex");
 }
-function closeForemAjouterPerson() {
-    let AjouterData = document.querySelector("#AjouterData");
-    AjouterData.classList.replace("flex", "hidden");
+export function closeForemAjouterPerson() {
+    const AjouterData = document.querySelector("#AjouterData");
+    if (!AjouterData)
+        return;
+    AjouterData.classList.remove("flex");
+    AjouterData.classList.add("hidden");
+}
+const experiencesContainer = document.getElementById("experiencesContainer");
+export function addExperions() {
+    const expDiv = document.createElement("div");
+    expDiv.className = "flex flex-col gap-2 border p-2 rounded-lg bg-gray-50";
+    expDiv.innerHTML = `
+          <div id="experience-item" class="space-y-4 relative p-10 border-2 rounded-2xl">
+                            <button type="button"
+                            class="remove-btn absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg"
+                            onclick="this.parentElement.parentElement.remove()">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input id="company" type="text" placeholder="Entreprise"
+                                class="input-focus px-4 py-3 border-2 rounded-2xl outline-none" />
+                            <input id="position" type="text" placeholder="Poste"
+                                class="input-focus px-4 py-3 border-2 rounded-2xl outline-none" />
+                            <input id="startDate" type="date" placeholder="Date de début"
+                                class="input-focus px-4 py-3 border-2 rounded-2xl outline-none" />
+                            <input id="endDate" type="date" placeholder="Date de fin (optionnel)"
+                                class="input-focus px-4 py-3 border-2 rounded-2xl outline-none" />
+                            <textarea id="description" placeholder="Description de vos missions et réalisations..." rows="3"
+                                class="input-focus md:col-span-2 px-4 py-3 border-2 rounded-2xl outline-none resize-none"></textarea>
+                        </div>
+                        </div>
+        `;
+    experiencesContainer.appendChild(expDiv);
+}
+export function getProfileData() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const nomInput = document.getElementById("nom");
+        const roleInput = document.getElementById("role");
+        const emailInput = document.getElementById("email");
+        const telInput = document.getElementById("telephone");
+        const photoInput = document.getElementById("photoUrl");
+        const nom = nomInput.value.trim();
+        const role = roleInput.value.trim();
+        const email = emailInput.value.trim();
+        const telephone = telInput.value.trim();
+        const photoUrl = photoInput.value.trim();
+        if (!nom) {
+            erroreMessage("Nom obligatoire");
+            nomInput.focus();
+            return false;
+        }
+        if (!role) {
+            erroreMessage("Role obligatoire");
+            roleInput.focus();
+            return false;
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            erroreMessage("Email non valide");
+            emailInput.focus();
+            return false;
+        }
+        const telRegex = /^[0-9]+$/;
+        if (!telRegex.test(telephone)) {
+            erroreMessage("Téléphone doit contenir seulement des chiffres");
+            telInput.focus();
+            return false;
+        }
+        const isValid = yield checkImageURL(photoUrl);
+        const image = isValid ? photoUrl : "../media/profileVide.jpg";
+        const experiences = [];
+        const experienceElems = document.querySelectorAll("#experience-item");
+        experienceElems.forEach((expElem) => {
+            var _a, _b;
+            const company = expElem.querySelector("#company").value || "";
+            const position = expElem.querySelector("#position").value || "";
+            const startDate = expElem.querySelector("#startDate").value || "";
+            const endDate = ((_a = expElem.querySelector("#endDate")) === null || _a === void 0 ? void 0 : _a.value) || "";
+            const description = ((_b = expElem.querySelector("#description")) === null || _b === void 0 ? void 0 : _b.value) || "";
+            experiences.push({ company, position, startDate, endDate, description });
+            return true;
+        });
+        const p = {
+            id: listPerson.length,
+            nom,
+            role,
+            email,
+            telephone,
+            photoUrl: image,
+            experiences,
+            location: "sonZon"
+        };
+        console.log("Created:", createProfile(p));
+        afficherLesPerson();
+        return true;
+    });
+}
+export function afficherLesPerson() {
+    var _a, _b;
+    let listPersonElemnt = document.querySelector("#listPerson");
+    (_a = document.querySelector("#deleteFiltrage")) === null || _a === void 0 ? void 0 : _a.classList.add("hidden");
+    const titeLiset = (_b = listPersonElemnt.previousElementSibling) === null || _b === void 0 ? void 0 : _b.querySelector("h2");
+    if (titeLiset) {
+        titeLiset.textContent = `liste Person`;
+    }
+    listPersonElemnt.innerHTML = "";
+    listPerson.filter((p) => p.location == "sonZon").forEach((person) => {
+        let profile = document.createElement("div");
+        profile.innerHTML = `<div class="flex flex-col items-center cursor-pointer lg:flex-row lg:justify-around lg:bg-[#a2d6f9] lg:gap-2 lg:p-2 lg:rounded-[10px] ">
+                    <img src="${person.photoUrl}" class="w-9 h-9  lg:w-15 lg:h-15 rounded-full border  object-cover shadow" />
+                    <p class="font-medium text-gray-700 truncate w-20 lg:w-30 lg:text-2xl">${person.nom}</p>
+                </div>`;
+        listPersonElemnt.appendChild(profile);
+    });
+}
+function afficherLesPersonFiltred(listPerson, zoneName) {
+    var _a, _b;
+    (_a = document.querySelector("#deleteFiltrage")) === null || _a === void 0 ? void 0 : _a.classList.remove("hidden");
+    let listPersonElemnt = document.querySelector("#listPerson");
+    const titeLiset = (_b = listPersonElemnt.previousElementSibling) === null || _b === void 0 ? void 0 : _b.querySelector("h2");
+    if (titeLiset) {
+        titeLiset.textContent = `liste acsese ${zoneName}`;
+        console.log(zoneName);
+    }
+    listPersonElemnt.innerHTML = "";
+    listPerson.forEach((person) => {
+        let profile = document.createElement("div");
+        profile.innerHTML = `<div class="flex flex-col items-center cursor-pointer lg:flex-row lg:justify-around lg:bg-[#a2d6f9] lg:gap-2 lg:p-2 lg:rounded-[10px]">
+                    <img src="${person.photoUrl}" class="w-9 h-9  lg:w-15 lg:h-15 rounded-full border  object-cover shadow" />
+                    <p class="font-medium text-gray-700 truncate w-20 lg:w-30 lg:text-2xl">${person.nom}</p>
+                </div>`;
+        profile.addEventListener("click", () => {
+            let zon = document.querySelector(`#${zoneName}`);
+            if (zon && addToZone(person.id, zoneName)) {
+                let espasePerson = zon.querySelector("#AjouterToZone");
+                espasePerson.innerHTML = person.nom;
+                espasePerson.style.backgroundImage = `url(${person.photoUrl})`;
+                afficherLesPerson();
+            }
+        });
+        listPersonElemnt.appendChild(profile);
+    });
+}
+export function ajouterToZone(Elemet) {
+    let paretElement = Elemet.closest(".zone");
+    console.log(paretElement);
+    let zoneName = paretElement === null || paretElement === void 0 ? void 0 : paretElement.id;
+    console.log(zoneName);
+    let listCorrect = listPerson.filter((person) => canAccess(person, zoneName !== null && zoneName !== void 0 ? zoneName : ""));
+    console.log(zoneName);
+    afficherLesPersonFiltred(listCorrect, zoneName !== null && zoneName !== void 0 ? zoneName : "empty");
+}
+function erroreMessage(message) {
+    const nodeErrore = document.createElement("div");
+    nodeErrore.className =
+        "absolute right-5 top-5 z-[100] bg-red-500 text-white font-bold p-2 rounded shadow";
+    nodeErrore.innerHTML = `
+        <h4>${message}</h4>
+        <div id="progress" class=" h-full bg-amber-900/40 top-0 left-0 absolute overflow-hidden rounded">
+        </div>
+    `;
+    document.body.appendChild(nodeErrore);
+    const progress = nodeErrore.querySelector("#progress");
+    let width = 0;
+    const timer = setInterval(() => {
+        width += 1;
+        progress.style.width = width + "%";
+        if (width >= 100) {
+            clearInterval(timer);
+            nodeErrore.remove();
+        }
+    }, 50);
 }
