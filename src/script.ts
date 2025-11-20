@@ -1,96 +1,43 @@
+import {aficherForemAjouterPerson , closeForemAjouterPerson , addExperions , getProfileData , afficherLesPerson , ajouterToZone} from './doom.js'
+import { addToZone } from './model.js';
 
-interface Experience {
-  company: string;
-  position: string;
-  startDate: string; 
-  endDate?: string;  
-  description?: string;
-}
-
-interface PersonProfile {
-  id: Number;
-  nom: string;
-  role: string;
-  photoUrl?: string;
-  email?: string;
-  telephone?: string;
-  experiences: Experience[];
-}
-
-export let listInisealePerson : PersonProfile[]
-
-export let Réception  : PersonProfile[]
-export let Salle_des_serveurs  : PersonProfile[]
-export let Salle_de_sécurité  : PersonProfile[]
-export let Manager  : PersonProfile[]
-export let Nettoyage  : PersonProfile[]
-export let Autres_rôles  : PersonProfile[]
+let addPerson  = document.querySelector("#addProfile") as HTMLButtonElement
+let closseForet = document.querySelector("#closeIcone") as HTMLImageElement
+let addExperienceBtn = document.querySelector("#addExperienceBtn") as HTMLButtonElement;
+let profileForm = document.querySelector("#profileForm") as HTMLFormElement
+let AddtoZone = document.querySelectorAll("#AjouterToZone") 
 
 
-function canAccess(
-    person: PersonProfile,
-     zone: string
-): boolean {
-  const role = person.role;
-
-  switch (zone) {
-
-    case "Réception":
-      return true ;
-
-    case "Salle des serveurs":
-      return role === "Technicien IT" || role === "Manager";
-
-    case "Salle de sécurité":
-      return role === "Agent de sécurité" || role === "Manager";
-
-    case "Salle d’archives":
-      return  role === "Agent de sécurité" || role === "Manager" || role === "Technicien IT" ;
-    default:
-        return true
-  }
-}
- 
-export function addToZone(
-  personId: number,
-  targetList: PersonProfile[],
-  zoneName: string,
-  listApre:PersonProfile[]
-): boolean {
-
-  const person = listApre.find(p => p.id === personId);
-  if (!person) return false;
-
-  if (!canAccess(person, zoneName)) {
-    console.warn(` ${person.nom} ne peut pas entrer dans ${zoneName}`);
-    return false;
-  }
+addPerson.addEventListener("click" , ()=>aficherForemAjouterPerson())
+closseForet.addEventListener("click" , ()=>closeForemAjouterPerson())
+addExperienceBtn.addEventListener("click" ,()=>addExperions() )
 
 
-  listApre = listApre.filter(p => p.id !== personId);
-
-  targetList.push(person);
-  return true;
-}
 
 
-function modifePersone(
-    person: PersonProfile ,
-    listPersone:PersonProfile[]
-):boolean {
-    for (let i = 0; i < listPersone.length; i++) {
-        if (listPersone[i].id == person.id) {
-            listPersone[i] = person
-            return true
-        }
-        
+profileForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const isValid = await getProfileData();
+
+    if (isValid) {
+        closeForemAjouterPerson();
+        profileForm.reset();
     }
-    return false
-}
+});
 
 
 
 
 
+afficherLesPerson()
 
+Array.from(AddtoZone).forEach((elemet)=>{
+  elemet.addEventListener("click", ()=>ajouterToZone(elemet))
+})
+
+
+document.querySelector("#deleteFiltrage")?.addEventListener("click" , ()=>{
+  afficherLesPerson()
+})
 

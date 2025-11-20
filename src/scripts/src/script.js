@@ -1,43 +1,34 @@
-export let listInisealePerson;
-export let Réception;
-export let Salle_des_serveurs;
-export let Salle_de_sécurité;
-export let Manager;
-export let Nettoyage;
-export let Autres_rôles;
-function canAccess(person, zone) {
-    const role = person.role;
-    switch (zone) {
-        case "Réception":
-            return true;
-        case "Salle des serveurs":
-            return role === "Technicien IT" || role === "Manager";
-        case "Salle de sécurité":
-            return role === "Agent de sécurité" || role === "Manager";
-        case "Salle d’archives":
-            return role === "Agent de sécurité" || role === "Manager" || role === "Technicien IT";
-        default:
-            return true;
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var _a;
+import { aficherForemAjouterPerson, closeForemAjouterPerson, addExperions, getProfileData, afficherLesPerson, ajouterToZone } from './doom.js';
+let addPerson = document.querySelector("#addProfile");
+let closseForet = document.querySelector("#closeIcone");
+let addExperienceBtn = document.querySelector("#addExperienceBtn");
+let profileForm = document.querySelector("#profileForm");
+let AddtoZone = document.querySelectorAll("#AjouterToZone");
+addPerson.addEventListener("click", () => aficherForemAjouterPerson());
+closseForet.addEventListener("click", () => closeForemAjouterPerson());
+addExperienceBtn.addEventListener("click", () => addExperions());
+profileForm.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
+    e.preventDefault();
+    const isValid = yield getProfileData();
+    if (isValid) {
+        closeForemAjouterPerson();
+        profileForm.reset();
     }
-}
-export function addToZone(personId, targetList, zoneName, listApre) {
-    const person = listApre.find(p => p.id === personId);
-    if (!person)
-        return false;
-    if (!canAccess(person, zoneName)) {
-        console.warn(` ${person.nom} ne peut pas entrer dans ${zoneName}`);
-        return false;
-    }
-    listApre = listApre.filter(p => p.id !== personId);
-    targetList.push(person);
-    return true;
-}
-function modifePersone(person, listPersone) {
-    for (let i = 0; i < listPersone.length; i++) {
-        if (listPersone[i].id == person.id) {
-            listPersone[i] = person;
-            return true;
-        }
-    }
-    return false;
-}
+}));
+afficherLesPerson();
+Array.from(AddtoZone).forEach((elemet) => {
+    elemet.addEventListener("click", () => ajouterToZone(elemet));
+});
+(_a = document.querySelector("#deleteFiltrage")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
+    afficherLesPerson();
+});
