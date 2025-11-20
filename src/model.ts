@@ -1,5 +1,5 @@
 
-interface Experience {
+export interface Experience {
   company: string;
   position: string;
   startDate: string; 
@@ -7,27 +7,26 @@ interface Experience {
   description?: string;
 }
 
-interface PersonProfile {
-  id: Number;
+export interface PersonProfile {
+  id: number; 
   nom: string;
   role: string;
   photoUrl?: string;
   email?: string;
   telephone?: string;
   experiences: Experience[];
+  location: string ;
 }
 
-export let listInisealePerson : PersonProfile[]
+export let listPerson : PersonProfile[] = []
 
-export let Salle_de_conférence  : PersonProfile[]
-export let Salle_des_serveurs  : PersonProfile[]
-export let Salle_de_sécurité  : PersonProfile[]
-export let Réception  : PersonProfile[]
-export let Salle_du_personnel  : PersonProfile[]
-export let Salle_darchives  : PersonProfile[]
+export function createProfile(person:PersonProfile):number{
+    return listPerson.push(person)
+}
 
 
-function canAccess(
+
+export function canAccess(
     person: PersonProfile,
      zone: string
 ): boolean {
@@ -35,16 +34,16 @@ function canAccess(
 
   switch (zone) {
 
-    case "Réception":
+    case "reception":
       return true ;
 
-    case "Salle des serveurs":
+    case "serveurs":
       return role === "Technicien IT" || role === "Manager";
 
-    case "Salle de sécurité":
+    case "securite":
       return role === "Agent de sécurité" || role === "Manager";
 
-    case "Salle d’archives":
+    case "archives":
       return  role === "Agent de sécurité" || role === "Manager" || role === "Technicien IT" ;
     default:
         return true
@@ -53,23 +52,17 @@ function canAccess(
  
 export function addToZone(
   personId: number,
-  targetList: PersonProfile[],
   zoneName: string,
-  listApre:PersonProfile[]
 ): boolean {
 
-  const person = listApre.find(p => p.id === personId);
+  const person = listPerson.find(p => p.id === personId);
   if (!person) return false;
 
   if (!canAccess(person, zoneName)) {
     console.warn(` ${person.nom} ne peut pas entrer dans ${zoneName}`);
     return false;
   }
-
-
-  listApre = listApre.filter(p => p.id !== personId);
-
-  targetList.push(person);
+  person.location = zoneName ;
   return true;
 }
 
@@ -87,6 +80,21 @@ function modifePersone(
     }
     return false
 }
+
+
+
+
+export function checkImageURL(url: string): Promise<boolean> {
+  return new Promise(resolve => {
+    if (!url) return resolve(false);
+
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = url;
+  });
+}
+
 
 
 
