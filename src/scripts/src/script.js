@@ -20,6 +20,7 @@ addExperienceBtn.addEventListener("click", () => addExperions());
 profileForm.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
     e.preventDefault();
     const isValid = yield getProfileData();
+    console.log(isValid);
     if (isValid) {
         closeForemAjouterPerson();
         profileForm.reset();
