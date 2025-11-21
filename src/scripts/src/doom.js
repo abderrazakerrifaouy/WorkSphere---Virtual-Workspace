@@ -219,9 +219,35 @@ function afficherLesPersontoZone() {
         personContainer.appendChild(img);
         personContainer.appendChild(name);
         let ajouterBtn = zon.querySelector("#AjouterToZone");
+        gereZoneBackgrouned();
         if (ajouterBtn && ajouterBtn.parentElement) {
             ajouterBtn.parentElement.insertBefore(personContainer, ajouterBtn);
         }
     });
     afficherLesPerson();
+}
+function gereZoneBackgrouned() {
+    const Ozone = {
+        conference: 0,
+        serveurs: 0,
+        securite: 0,
+        reception: 0,
+        archives: 0,
+        personnel: 0,
+    };
+    listPerson.forEach((p) => {
+        if (p.location in Ozone)
+            Ozone[p.location]++;
+    });
+    Object.keys(Ozone).forEach((zoneName) => {
+        const zoneEl = document.querySelector(`#${zoneName}`);
+        if (!zoneEl)
+            return;
+        if (Ozone[zoneName] > 0) {
+            zoneEl.classList.remove("bg-red-300/60");
+        }
+        else {
+            zoneEl.classList.add("bg-red-300/60");
+        }
+    });
 }
