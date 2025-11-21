@@ -80,9 +80,8 @@ export function getProfileData() {
             emailInput.focus();
             return false;
         }
-        const telRegex = /^[0-9]+$/;
-        if (!telRegex.test(telephone)) {
-            erroreMessage("Téléphone doit contenir seulement des chiffres");
+        if (!/^\d{10}$/.test(telephone)) {
+            erroreMessage("Téléphone doit contenir 10 chiffres");
             telInput.focus();
             return false;
         }
