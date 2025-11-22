@@ -93,12 +93,12 @@ export async function getProfileData() {
         return false;
     }
 
-    const telRegex = /^[0-9]+$/;
-    if (!telRegex.test(telephone)) {
-        erroreMessage("Téléphone doit contenir seulement des chiffres");
-        telInput.focus();
-        return false;
-    }
+    if (!/^\d{10}$/.test(telephone)) {
+    erroreMessage("Téléphone doit contenir 10 chiffres");
+    telInput.focus();
+    return false;
+}
+
 
     const isValid = await checkImageURL(photoUrl);
     const image = isValid ? photoUrl : "../media/profileVide.jpg";
