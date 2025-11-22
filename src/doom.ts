@@ -156,6 +156,9 @@ export function afficherLesPerson() {
                     <img src="${person.photoUrl}" class="w-9 h-9  lg:w-15 lg:h-15 rounded-full border  object-cover shadow" />
                     <p class="font-medium text-gray-700 truncate w-20 lg:w-30 lg:text-2xl">${person.nom}</p>
                 </div>`
+        profile.addEventListener("click",()=>{
+            afficherPopupPerson(person.id)
+        })
         listPersonElemnt.appendChild(profile)
     })
 
@@ -178,8 +181,8 @@ function afficherLesPersonFiltred(listPerson: PersonProfile[], zoneName: string)
     listPersonElemnt.innerHTML = "";
 
     listPerson.forEach((person) => {
-
-        let profile = document.createElement("div");
+        if (person.location != zoneName) {
+            let profile = document.createElement("div");
 
         profile.innerHTML = `
             <div class="flex flex-col items-center cursor-pointer 
@@ -212,7 +215,10 @@ function afficherLesPersonFiltred(listPerson: PersonProfile[], zoneName: string)
         });
 
         listPersonElemnt.appendChild(profile);
+    }
     });
+        
+        
 }
 
 
@@ -271,7 +277,7 @@ function afficherLesPersontoZone() {
         
         let personContainer = document.createElement("div");
         personContainer.className =
-            "person-item flex flex-col justify-center items-center w-[45%] md:w-[22%] max-w-[120px] mb-3";
+            "person-item flex flex-col  justify-around items-center w-[45%] md:w-[22%] max-w-[120px] mb-3";
 
         let img = document.createElement("div");
         img.className =
@@ -284,6 +290,9 @@ function afficherLesPersontoZone() {
 
         personContainer.appendChild(img);
         personContainer.appendChild(name);
+        personContainer.addEventListener("click" , ()=>{
+            afficherPopupPerson(p.id)
+        })
 
         let ajouterBtn = zon.querySelector("#AjouterToZone") as HTMLElement | null;
         gereZoneBackgrouned()
@@ -321,6 +330,107 @@ function gereZoneBackgrouned() {
             zoneEl.classList.add("bg-red-300/60");
         }
     });
+}
+
+
+function afficherPopupPerson(idPerson: number) {
+    const person = listPerson.find(p => p.id === idPerson);
+    if (!person) {
+        console.warn("Personne introuvable");
+        return;
+    }
+
+
+    let popup = document.querySelector("#popupPerson") as HTMLDivElement;
+    if (!popup) {
+        popup = document.createElement("div");
+        popup.id = "popupPerson";
+        popup.className = "fixed inset-0 bg-black/60 flex justify-center items-center z-50 p-4";
+        popup.innerHTML = `
+            <div id="popupContent" class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl"></div>
+        `;
+        document.body.appendChild(popup);
+        
+
+        popup.addEventListener("click", (e) => {
+            if (e.target === popup) popup.remove();
+        });
+    }
+
+    const content = popup.querySelector("#popupContent") as HTMLDivElement;
+
+    const expHtml = person.experiences.map(exp => `
+        <div class="bg-linear-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-4 rounded-lg mb-3 hover:shadow-md transition-shadow">
+            <h3 class="font-bold text-lg text-gray-800">${exp.company}</h3>
+            <p class="text-blue-600 font-medium">${exp.position}</p>
+            <p class="text-sm text-gray-500 mt-1">
+                <span class="inline-flex items-center">
+                    📅 ${exp.startDate} → ${exp.endDate ?? "Présent"}
+                </span>
+            </p>
+            ${exp.description ? `<p class="text-gray-700 mt-2 text-sm leading-relaxed">${exp.description}</p>` : ""}
+        </div>
+    `).join("");
+
+    content.innerHTML = `
+        <div class="relative">
+            <!-- Header avec dégradé -->
+            <div class="bg-linear-to-r from-blue-600 to-indigo-600 p-8 rounded-t-2xl text-white text-center">
+                <img src="${person.photoUrl ?? './default.png'}" 
+                     class="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-white shadow-lg"/>
+                <h2 class="text-2xl font-bold mb-1">${person.nom}</h2>
+                <p class="text-blue-100 text-lg">${person.role}</p>
+            </div>
+
+            <!-- Corps du popup -->
+            <div class="p-6">
+                <!-- Informations de contact -->
+                <div class="bg-gray-50 rounded-lg p-4 mb-6 space-y-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-gray-600">Email :</span>
+                        <span class="font-medium">${person.email ?? "—"}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-gray-600">Téléphone :</span>
+                        <span class="font-medium">${person.telephone ?? "—"}</span>
+                    </div>
+                </div>
+
+                <!-- Section Expériences -->
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        Expériences professionnelles
+                    </h3>
+                    <div class="space-y-3">
+                        ${expHtml || '<p class="text-gray-500 text-center py-4">Aucune expérience enregistrée</p>'}
+                    </div>
+                </div>
+
+               
+                <div class="flex justify-center mt-6">
+                    <button id="closePopup" 
+                            class="px-6 py-3 bg-linear-to-r from-red-500 to-red-600 text-white rounded-lg font-medium hover:from-red-600 hover:to-red-700 transition-all shadow-md hover:shadow-lg">
+                         Fermer
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+  
+    content.querySelector("#closePopup")?.addEventListener("click", () => {
+        popup.remove();
+    });
+
+
+    popup.classList.remove("hidden");
+    
+
+    popup.style.opacity = "0";
+    setTimeout(() => {
+        popup.style.transition = "opacity 0.2s";
+        popup.style.opacity = "1";
+    }, 10);
 }
 
 
