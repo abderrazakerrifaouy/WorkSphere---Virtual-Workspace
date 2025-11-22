@@ -33,15 +33,11 @@ export function canAccess(
   const role = person.role;
 
   switch (zone) {
-
-    case "reception":
-      return true ;
-
     case "serveurs":
-      return role === "Technicien IT" || role === "Manager";
+      return role === "Technicien IT" || role === "Manager" || role === "Nettoyage";
 
     case "securite":
-      return role === "Agent de sécurité" || role === "Manager";
+      return role === "Agent de sécurité" || role === "Manager" || role === "Nettoyage";
 
     case "archives":
       return  role === "Agent de sécurité" || role === "Manager" || role === "Technicien IT" ;
