@@ -49,6 +49,10 @@ export function canAccess(
         return true
   }
 }
+
+
+
+
  
 export function addToZone(
   personId: number,
@@ -58,13 +62,17 @@ export function addToZone(
   const person = listPerson.find(p => p.id === personId);
   if (!person) return false;
 
+
   if (!canAccess(person, zoneName)) {
     console.warn(` ${person.nom} ne peut pas entrer dans ${zoneName}`);
     return false;
   }
-  person.location = zoneName ;
+
+  person.location = zoneName;
+
   return true;
 }
+
 
 
 function modifePersone(

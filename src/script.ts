@@ -19,7 +19,7 @@ profileForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const isValid = await getProfileData();
-
+    console.log(isValid)
     if (isValid) {
         closeForemAjouterPerson();
         profileForm.reset();

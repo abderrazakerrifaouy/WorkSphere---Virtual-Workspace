@@ -149,7 +149,7 @@ export function afficherLesPerson() {
         titeLiset.textContent = `liste Person`;
     }
     listPersonElemnt.innerHTML = ""
-    listPerson.filter((p)=>p.location == "sonZon").forEach((person) => {
+    listPerson.filter((p) => p.location == "sonZon").forEach((person) => {
         let profile = document.createElement("div") as HTMLDivElement;
 
         profile.innerHTML = `<div class="flex flex-col items-center cursor-pointer lg:flex-row lg:justify-around lg:bg-[#a2d6f9] lg:gap-2 lg:p-2 lg:rounded-[10px] ">
@@ -162,35 +162,59 @@ export function afficherLesPerson() {
 }
 
 function afficherLesPersonFiltred(listPerson: PersonProfile[], zoneName: string) {
-    document.querySelector("#deleteFiltrage")?.classList.remove("hidden")
-    let listPersonElemnt = document.querySelector("#listPerson") as HTMLDivElement
+
+
+
+    document.querySelector("#deleteFiltrage")?.classList.remove("hidden");
+
+    const listPersonElemnt = document.querySelector("#listPerson") as HTMLDivElement;
     const titeLiset = listPersonElemnt.previousElementSibling?.querySelector("h2") as HTMLElement | null;
 
     if (titeLiset) {
         titeLiset.textContent = `liste acsese ${zoneName}`;
-        console.log(zoneName)
+        console.log("zoneName =", zoneName);
     }
 
-    listPersonElemnt.innerHTML = ""
-    listPerson.forEach((person) => {
-        let profile = document.createElement("div") as HTMLDivElement;
+    listPersonElemnt.innerHTML = "";
 
-        profile.innerHTML = `<div class="flex flex-col items-center cursor-pointer lg:flex-row lg:justify-around lg:bg-[#a2d6f9] lg:gap-2 lg:p-2 lg:rounded-[10px]">
-                    <img src="${person.photoUrl}" class="w-9 h-9  lg:w-15 lg:h-15 rounded-full border  object-cover shadow" />
-                    <p class="font-medium text-gray-700 truncate w-20 lg:w-30 lg:text-2xl">${person.nom}</p>
-                </div>`
-        profile.addEventListener("click" , ()=>{
-            let zon = document.querySelector(`#${zoneName}`) as HTMLDivElement
-            if (zon!! && addToZone(person.id,zoneName)) {
-             let espasePerson = zon.querySelector("#AjouterToZone") as HTMLElement
-             espasePerson.innerHTML = person.nom
-             espasePerson.style.backgroundImage = `url(${person.photoUrl})`
-             afficherLesPerson()
+    listPerson.forEach((person) => {
+
+        let profile = document.createElement("div");
+
+        profile.innerHTML = `
+            <div class="flex flex-col items-center cursor-pointer 
+                lg:flex-row lg:justify-around lg:bg-[#a2d6f9] lg:gap-2 lg:p-2 lg:rounded-[10px]">
+                <img src="${person.photoUrl}" class="w-9 h-9 lg:w-15 lg:h-15 rounded-full border object-cover shadow" />
+                <p class="font-medium text-gray-700 truncate w-20 lg:w-30 lg:text-2xl">
+                    ${person.nom}
+                </p>
+            </div>`;
+
+        profile.addEventListener("click", () => {
+
+            if (!zoneName || zoneName.startsWith("#")) {
+                console.error("zoneName invalide :", zoneName);
+                return;
             }
-        })
-        listPersonElemnt.appendChild(profile)
-    })
+
+            let zon = document.querySelector(`#${zoneName}`) as HTMLDivElement | null;
+
+            if (!zon) {
+                console.error("Zone introuvable dans le DOM :", zoneName);
+                return;
+            }
+
+            if (addToZone(person.id, zoneName)) {
+
+                afficherLesPersontoZone()
+
+            }
+        });
+
+        listPersonElemnt.appendChild(profile);
+    });
 }
+
 
 
 
@@ -231,3 +255,73 @@ function erroreMessage(message: string) {
         }
     }, 50);
 }
+
+
+
+
+function afficherLesPersontoZone() {
+
+    document.querySelectorAll(".person-item").forEach(e => e.remove());
+
+    listPerson.forEach((p) => {
+
+        let zon = document.querySelector(`#${p.location}`) as HTMLDivElement;
+        if (!zon) return;
+
+        
+        let personContainer = document.createElement("div");
+        personContainer.className =
+            "person-item flex flex-col justify-center items-center w-[45%] md:w-[22%] max-w-[120px] mb-3";
+
+        let img = document.createElement("div");
+        img.className =
+            "w-[40px] h-[40px] md:w-[60px] md:h-[60px] rounded-full bg-cover bg-center border-2 border-amber-200";
+        img.style.backgroundImage = `url(${p.photoUrl})`;
+
+        let name = document.createElement("p");
+        name.className = "text-white font-bold text-center text-sm mt-1";
+        name.textContent = p.nom;
+
+        personContainer.appendChild(img);
+        personContainer.appendChild(name);
+
+        let ajouterBtn = zon.querySelector("#AjouterToZone") as HTMLElement | null;
+        gereZoneBackgrouned()
+
+        if (ajouterBtn && ajouterBtn.parentElement) {
+            ajouterBtn.parentElement.insertBefore(personContainer, ajouterBtn);
+        }
+    });
+
+    afficherLesPerson();
+}
+
+
+function gereZoneBackgrouned() {
+    const Ozone: Record<string, number> = {
+        conference: 0,
+        serveurs: 0,
+        securite: 0,
+        reception: 0,
+        archives: 0,
+        personnel: 0,
+    };
+
+    listPerson.forEach((p) => {
+        if (p.location in Ozone) Ozone[p.location]++;
+    });
+
+    Object.keys(Ozone).forEach((zoneName) => {
+        const zoneEl = document.querySelector(`#${zoneName}`);
+        if (!zoneEl) return;
+
+        if (Ozone[zoneName] > 0) {
+            zoneEl.classList.remove("bg-red-300/60");
+        } else {
+            zoneEl.classList.add("bg-red-300/60");
+        }
+    });
+}
+
+
+
