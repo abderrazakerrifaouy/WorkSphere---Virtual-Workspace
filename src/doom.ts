@@ -1,7 +1,8 @@
 import { Experience, PersonProfile } from './model'
 import { createProfile, listPerson, checkImageURL, addToZone, canAccess } from './model.js'
 
-export function aficherForemAjouterPerson() {
+export function aficherForemAjouterPerson() 
+{
     const AjouterData = document.querySelector("#AjouterData") as HTMLDivElement;
 
     if (!AjouterData) return;
@@ -10,7 +11,8 @@ export function aficherForemAjouterPerson() {
     AjouterData.classList.add("flex");
 }
 
-export function closeForemAjouterPerson() {
+export function closeForemAjouterPerson() 
+{
     const AjouterData = document.querySelector("#AjouterData") as HTMLDivElement;
 
     if (!AjouterData) return;
@@ -19,15 +21,12 @@ export function closeForemAjouterPerson() {
     AjouterData.classList.add("hidden");
 }
 
-
-
 const experiencesContainer = document.getElementById("experiencesContainer") as HTMLFormElement;
 
-
-export function addExperions() {
+export function addExperions() 
+{
     const expDiv = document.createElement("div");
     expDiv.className = "flex flex-col gap-2 border p-2 rounded-lg bg-gray-50";
-
     expDiv.innerHTML = `
           <div id="experience-item" class="space-y-4 relative p-10 border-2 rounded-2xl">
                             <button type="button"
@@ -50,29 +49,22 @@ export function addExperions() {
                             <textarea id="description" placeholder="Description de vos missions et réalisations..." rows="3"
                                 class="input-focus md:col-span-2 px-4 py-3 border-2 rounded-2xl outline-none resize-none"></textarea>
                         </div>
-                        </div>
-        `;
+                        </div>`;
     experiencesContainer.appendChild(expDiv);
-
 }
 
-
-
-export async function getProfileData() {
-
+export async function getProfileData() 
+{
     const nomInput = document.getElementById("nom") as HTMLInputElement;
     const roleInput = document.getElementById("role") as HTMLInputElement;
     const emailInput = document.getElementById("email") as HTMLInputElement;
     const telInput = document.getElementById("telephone") as HTMLInputElement;
     const photoInput = document.getElementById("photoUrl") as HTMLInputElement;
-
     const nom = nomInput.value.trim();
     const role = roleInput.value.trim();
     const email = emailInput.value.trim();
     const telephone = telInput.value.trim();
     const photoUrl = photoInput.value.trim();
-
-
 
     if (!nom) {
         erroreMessage("Nom obligatoire");
@@ -99,12 +91,8 @@ export async function getProfileData() {
     return false;
 }
 
-
     const isValid = await checkImageURL(photoUrl);
     const image = isValid ? photoUrl : "../media/profileVide.jpg";
-
-
-
     const experiences: Experience[] = [];
     const experienceElems = document.querySelectorAll("#experience-item");
 
@@ -114,11 +102,9 @@ export async function getProfileData() {
         const startDate = (expElem.querySelector("#startDate") as HTMLInputElement).value || "";
         const endDate = (expElem.querySelector("#endDate") as HTMLInputElement)?.value || "";
         const description = (expElem.querySelector("#description") as HTMLInputElement)?.value || "";
-
         experiences.push({ company, position, startDate, endDate, description });
         return true;
     });
-
 
     const p: PersonProfile = {
         id: listPerson.length,
@@ -136,12 +122,8 @@ export async function getProfileData() {
     return true
 }
 
-
-
-
-
 export function afficherLesPerson() {
-    let listPersonElemnt = document.querySelector("#listPerson") as HTMLDivElement
+    let listPersonElemnt = document.querySelector("#listPersonElemnt") as HTMLDivElement
     document.querySelector("#deleteFiltrage")?.classList.add("hidden")
     const titeLiset = listPersonElemnt.previousElementSibling?.querySelector("h2") as HTMLElement | null;
 
@@ -161,7 +143,6 @@ export function afficherLesPerson() {
         })
         listPersonElemnt.appendChild(profile)
     })
-
 }
 
 function afficherLesPersonFiltred(listPerson: PersonProfile[], zoneName: string) {
@@ -170,7 +151,7 @@ function afficherLesPersonFiltred(listPerson: PersonProfile[], zoneName: string)
 
     document.querySelector("#deleteFiltrage")?.classList.remove("hidden");
 
-    const listPersonElemnt = document.querySelector("#listPerson") as HTMLDivElement;
+    const listPersonElemnt = document.querySelector("#listPersonElemnt") as HTMLDivElement;
     const titeLiset = listPersonElemnt.previousElementSibling?.querySelector("h2") as HTMLElement | null;
 
     if (titeLiset) {
@@ -195,10 +176,6 @@ function afficherLesPersonFiltred(listPerson: PersonProfile[], zoneName: string)
 
         profile.addEventListener("click", () => {
 
-            if (!zoneName || zoneName.startsWith("#")) {
-                console.error("zoneName invalide :", zoneName);
-                return;
-            }
 
             let zon = document.querySelector(`#${zoneName}`) as HTMLDivElement | null;
 
@@ -326,7 +303,9 @@ function gereZoneBackgrouned() {
 
         if (Ozone[zoneName] > 0) {
             zoneEl.classList.remove("bg-red-300/60");
-        } else {
+        } else if (Ozone[zoneName] >= 4){
+
+        }else {
             zoneEl.classList.add("bg-red-300/60");
         }
     });
