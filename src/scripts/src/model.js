@@ -6,37 +6,37 @@ export function canAccess(person, zone) {
     const role = person.role;
     switch (zone) {
         case "serveurs":
-            return role === "Technicien IT" || role === "Manager" || role === "Nettoyage";
+            return (role === "Technicien IT" ||
+                role === "Manager" ||
+                role === "Nettoyage");
         case "securite":
-            return role === "Agent de sécurité" || role === "Manager" || role === "Nettoyage";
+            return (role === "Agent de sécurité" ||
+                role === "Manager" ||
+                role === "Nettoyage");
         case "archives":
-            return role === "Agent de sécurité" || role === "Manager" || role === "Technicien IT";
+            return (role === "Agent de sécurité" ||
+                role === "Manager" ||
+                role === "Technicien IT");
         default:
             return true;
     }
 }
 export function addToZone(personId, zoneName) {
-    const person = listPerson.find(p => p.id === personId);
+    const person = listPerson.find((p) => p.id === personId);
     if (!person)
         return false;
+    const peopleInZone = listPerson.filter((p) => p.location === zoneName);
+    if (peopleInZone.length >= 4)
+        return false;
     if (!canAccess(person, zoneName)) {
-        console.warn(` ${person.nom} ne peut pas entrer dans ${zoneName}`);
+        console.warn(`${person.nom} ne peut pas entrer dans ${zoneName}`);
         return false;
     }
     person.location = zoneName;
     return true;
 }
-function modifePersone(person, listPersone) {
-    for (let i = 0; i < listPersone.length; i++) {
-        if (listPersone[i].id == person.id) {
-            listPersone[i] = person;
-            return true;
-        }
-    }
-    return false;
-}
 export function checkImageURL(url) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         if (!url)
             return resolve(false);
         const img = new Image();

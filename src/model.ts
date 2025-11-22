@@ -1,95 +1,82 @@
-
 export interface Experience {
   company: string;
   position: string;
-  startDate: string; 
-  endDate?: string;  
+  startDate: string;
+  endDate?: string;
   description?: string;
 }
 
 export interface PersonProfile {
-  id: number; 
+  id: number;
   nom: string;
   role: string;
   photoUrl?: string;
-  email?: string;
-  telephone?: string;
+  email: string;
+  telephone: string;
   experiences: Experience[];
-  location: string ;
+  location: string;
 }
 
-export let listPerson : PersonProfile[] = []
+export let listPerson: PersonProfile[] = [];
 
-export function createProfile(person:PersonProfile):number{
-    return listPerson.push(person)
+
+export function createProfile(person: PersonProfile): number {
+  return listPerson.push(person);
 }
 
 
-
-export function canAccess(
-    person: PersonProfile,
-     zone: string
-): boolean {
+export function canAccess(person: PersonProfile, zone: string): boolean {
   const role = person.role;
 
   switch (zone) {
     case "serveurs":
-      return role === "Technicien IT" || role === "Manager" || role === "Nettoyage";
+      return (
+        role === "Technicien IT" ||
+        role === "Manager" ||
+        role === "Nettoyage"
+      );
 
     case "securite":
-      return role === "Agent de sécurité" || role === "Manager" || role === "Nettoyage";
+      return (
+        role === "Agent de sécurité" ||
+        role === "Manager" ||
+        role === "Nettoyage"
+      );
 
     case "archives":
-      return  role === "Agent de sécurité" || role === "Manager" || role === "Technicien IT" ;
+      return (
+        role === "Agent de sécurité" ||
+        role === "Manager" ||
+        role === "Technicien IT"
+      );
+
     default:
-        return true
+      return true;
   }
 }
 
 
-
-
- 
-export function addToZone(
-  personId: number,
-  zoneName: string,
-): boolean {
-
-  const person = listPerson.find(p => p.id === personId);
+export function addToZone(personId: number, zoneName: string): boolean {
+  const person = listPerson.find((p) => p.id === personId);
   if (!person) return false;
 
+  
+  const peopleInZone = listPerson.filter((p) => p.location === zoneName);
+  if (peopleInZone.length >= 4) return false;
 
+  
   if (!canAccess(person, zoneName)) {
-    console.warn(` ${person.nom} ne peut pas entrer dans ${zoneName}`);
+    console.warn(`${person.nom} ne peut pas entrer dans ${zoneName}`);
     return false;
   }
 
   person.location = zoneName;
-
   return true;
 }
 
 
-
-function modifePersone(
-    person: PersonProfile ,
-    listPersone:PersonProfile[]
-):boolean {
-    for (let i = 0; i < listPersone.length; i++) {
-        if (listPersone[i].id == person.id) {
-            listPersone[i] = person
-            return true
-        }
-        
-    }
-    return false
-}
-
-
-
-
 export function checkImageURL(url: string): Promise<boolean> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     if (!url) return resolve(false);
 
     const img = new Image();
@@ -98,11 +85,3 @@ export function checkImageURL(url: string): Promise<boolean> {
     img.src = url;
   });
 }
-
-
-
-
-
-
-
-

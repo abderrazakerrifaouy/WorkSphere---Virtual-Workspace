@@ -48,8 +48,7 @@ export function addExperions() {
                             <textarea id="description" placeholder="Description de vos missions et réalisations..." rows="3"
                                 class="input-focus md:col-span-2 px-4 py-3 border-2 rounded-2xl outline-none resize-none"></textarea>
                         </div>
-                        </div>
-        `;
+                        </div>`;
     experiencesContainer.appendChild(expDiv);
 }
 export function getProfileData() {
@@ -116,7 +115,7 @@ export function getProfileData() {
 }
 export function afficherLesPerson() {
     var _a, _b;
-    let listPersonElemnt = document.querySelector("#listPerson");
+    let listPersonElemnt = document.querySelector("#listPersonElemnt");
     (_a = document.querySelector("#deleteFiltrage")) === null || _a === void 0 ? void 0 : _a.classList.add("hidden");
     const titeLiset = (_b = listPersonElemnt.previousElementSibling) === null || _b === void 0 ? void 0 : _b.querySelector("h2");
     if (titeLiset) {
@@ -138,7 +137,7 @@ export function afficherLesPerson() {
 function afficherLesPersonFiltred(listPerson, zoneName) {
     var _a, _b;
     (_a = document.querySelector("#deleteFiltrage")) === null || _a === void 0 ? void 0 : _a.classList.remove("hidden");
-    const listPersonElemnt = document.querySelector("#listPerson");
+    const listPersonElemnt = document.querySelector("#listPersonElemnt");
     const titeLiset = (_b = listPersonElemnt.previousElementSibling) === null || _b === void 0 ? void 0 : _b.querySelector("h2");
     if (titeLiset) {
         titeLiset.textContent = `liste acsese ${zoneName}`;
@@ -157,10 +156,6 @@ function afficherLesPersonFiltred(listPerson, zoneName) {
                 </p>
             </div>`;
             profile.addEventListener("click", () => {
-                if (!zoneName || zoneName.startsWith("#")) {
-                    console.error("zoneName invalide :", zoneName);
-                    return;
-                }
                 let zon = document.querySelector(`#${zoneName}`);
                 if (!zon) {
                     console.error("Zone introuvable dans le DOM :", zoneName);
@@ -252,6 +247,8 @@ function gereZoneBackgrouned() {
             return;
         if (Ozone[zoneName] > 0) {
             zoneEl.classList.remove("bg-red-300/60");
+        }
+        else if (Ozone[zoneName] >= 4) {
         }
         else {
             zoneEl.classList.add("bg-red-300/60");

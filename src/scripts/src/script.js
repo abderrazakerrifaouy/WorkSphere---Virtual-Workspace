@@ -17,6 +17,7 @@ let AddtoZone = document.querySelectorAll("#AjouterToZone");
 addPerson.addEventListener("click", () => aficherForemAjouterPerson());
 closseForet.addEventListener("click", () => closeForemAjouterPerson());
 addExperienceBtn.addEventListener("click", () => addExperions());
+afficherLesPerson();
 profileForm.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
     e.preventDefault();
     const isValid = yield getProfileData();
@@ -26,7 +27,6 @@ profileForm.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, 
         profileForm.reset();
     }
 }));
-afficherLesPerson();
 Array.from(AddtoZone).forEach((elemet) => {
     elemet.addEventListener("click", () => ajouterToZone(elemet));
 });
