@@ -88,16 +88,42 @@ export function getProfileData() {
         const image = isValid ? photoUrl : "../media/profileVide.jpg";
         const experiences = [];
         const experienceElems = document.querySelectorAll("#experience-item");
+        const today = new Date().toISOString().split("T")[0];
+        let valideExperrionce = true;
         experienceElems.forEach((expElem) => {
             var _a, _b;
-            const company = expElem.querySelector("#company").value || "";
-            const position = expElem.querySelector("#position").value || "";
-            const startDate = expElem.querySelector("#startDate").value || "";
+            const company = expElem.querySelector("#company").value.trim() || "";
+            const position = expElem.querySelector("#position").value.trim() || "";
+            const startDate = expElem.querySelector("#startDate").value;
             const endDate = ((_a = expElem.querySelector("#endDate")) === null || _a === void 0 ? void 0 : _a.value) || "";
-            const description = ((_b = expElem.querySelector("#description")) === null || _b === void 0 ? void 0 : _b.value) || "";
+            const description = ((_b = expElem.querySelector("#description")) === null || _b === void 0 ? void 0 : _b.value.trim()) || "";
+            if (!startDate) {
+                erroreMessage("Date de début est obligatoire");
+                valideExperrionce = false;
+                return false;
+            }
+            if (startDate > today) {
+                erroreMessage(`La date de début ${startDate} ne peut pas être dans le futur`);
+                valideExperrionce = false;
+                return false;
+            }
+            if (endDate) {
+                if (endDate > today) {
+                    erroreMessage(`La date de fin ${endDate} ne peut pas être dans le futur`);
+                    valideExperrionce = false;
+                    return false;
+                }
+                if (endDate < startDate) {
+                    erroreMessage(`La date de fin ${endDate} ne peut pas être avant la date de début ${startDate}`);
+                    valideExperrionce = false;
+                    return false;
+                }
+            }
             experiences.push({ company, position, startDate, endDate, description });
-            return true;
         });
+        if (!valideExperrionce) {
+            return false;
+        }
         const p = {
             id: listPerson.length,
             nom,
