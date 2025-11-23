@@ -7,36 +7,58 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var _a;
 import { aficherForemAjouterPerson, closeForemAjouterPerson, addExperions, getProfileData, afficherLesPerson, ajouterToZone, rocherch } from './doom.js';
-import { listPerson } from './model.js';
-let addPerson = document.querySelector("#addProfile");
-let closseForet = document.querySelector("#closeIcone");
-let addExperienceBtn = document.querySelector("#addExperienceBtn");
-let profileForm = document.querySelector("#profileForm");
-let AddtoZone = document.querySelectorAll("#AjouterToZone");
-let inputeSearch = document.querySelector("#paretRocherche");
-let listP = listPerson;
-addPerson.addEventListener("click", () => aficherForemAjouterPerson());
-closseForet.addEventListener("click", () => closeForemAjouterPerson());
-addExperienceBtn.addEventListener("click", () => addExperions());
-afficherLesPerson();
-profileForm.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
-    e.preventDefault();
-    const isValid = yield getProfileData();
-    console.log(isValid);
-    if (isValid) {
-        closeForemAjouterPerson();
-        profileForm.reset();
-    }
-}));
-Array.from(AddtoZone).forEach((elemet) => {
-    elemet.addEventListener("click", () => ajouterToZone(elemet));
-});
-(_a = document.querySelector("#deleteFiltrage")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
+/* Small DOM helpers to remove repetition */
+function q(sel) {
+    return document.querySelector(sel);
+}
+function qAll(sel) {
+    return document.querySelectorAll(sel);
+}
+function on(el, ev, cb) {
+    if (!el)
+        return;
+    el.addEventListener(ev, cb);
+}
+/* Initialization */
+function initApp() {
+    const addPerson = q('#addProfile');
+    const closseForet = q('#closeIcone');
+    const addExperienceBtn = q('#addExperienceBtn');
+    const profileForm = q('#profileForm');
+    const AddtoZone = qAll('#AjouterToZone'); // note: using id for multiple elements is not ideal; consider using a class
+    const inputeSearch = q('#paretRocherche');
+    on(addPerson, 'click', () => aficherForemAjouterPerson());
+    on(closseForet, 'click', () => closeForemAjouterPerson());
+    on(addExperienceBtn, 'click', () => addExperions());
+    // initial render
     afficherLesPerson();
-});
-inputeSearch === null || inputeSearch === void 0 ? void 0 : inputeSearch.addEventListener("input", () => {
-    const valeuInput = inputeSearch.value;
-    rocherch(valeuInput);
-});
+    on(profileForm, 'submit', (e) => __awaiter(this, void 0, void 0, function* () {
+        e.preventDefault();
+        const isValid = yield getProfileData();
+        console.log('profile valid?', isValid);
+        if (isValid) {
+            closeForemAjouterPerson();
+            profileForm.reset();
+        }
+    }));
+    // Attach add-to-zone handlers (safely)
+    if (AddtoZone && AddtoZone.length > 0) {
+        AddtoZone.forEach((elemet) => {
+            elemet.addEventListener('click', () => ajouterToZone(elemet));
+        });
+    }
+    // Clear filter button (may be absent)
+    on(q('#deleteFiltrage'), 'click', () => {
+        afficherLesPerson();
+    });
+    // Search input (ensure it's an input)
+    if (inputeSearch) {
+        inputeSearch.addEventListener('input', () => {
+            const valeuInput = inputeSearch.value.trim();
+            rocherch(valeuInput);
+        });
+    }
+}
+/* Auto-run init */
+initApp();
