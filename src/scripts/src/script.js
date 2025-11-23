@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { aficherForemAjouterPerson, closeForemAjouterPerson, addExperions, getProfileData, afficherLesPerson, ajouterToZone, rocherch } from './doom.js';
-/* Small DOM helpers to remove repetition */
 function q(sel) {
     return document.querySelector(sel);
 }
@@ -20,18 +19,16 @@ function on(el, ev, cb) {
         return;
     el.addEventListener(ev, cb);
 }
-/* Initialization */
 function initApp() {
     const addPerson = q('#addProfile');
     const closseForet = q('#closeIcone');
     const addExperienceBtn = q('#addExperienceBtn');
     const profileForm = q('#profileForm');
-    const AddtoZone = qAll('#AjouterToZone'); // note: using id for multiple elements is not ideal; consider using a class
+    const AddtoZone = qAll('#AjouterToZone');
     const inputeSearch = q('#paretRocherche');
     on(addPerson, 'click', () => aficherForemAjouterPerson());
     on(closseForet, 'click', () => closeForemAjouterPerson());
     on(addExperienceBtn, 'click', () => addExperions());
-    // initial render
     afficherLesPerson();
     on(profileForm, 'submit', (e) => __awaiter(this, void 0, void 0, function* () {
         e.preventDefault();
@@ -42,17 +39,14 @@ function initApp() {
             profileForm.reset();
         }
     }));
-    // Attach add-to-zone handlers (safely)
     if (AddtoZone && AddtoZone.length > 0) {
         AddtoZone.forEach((elemet) => {
             elemet.addEventListener('click', () => ajouterToZone(elemet));
         });
     }
-    // Clear filter button (may be absent)
     on(q('#deleteFiltrage'), 'click', () => {
         afficherLesPerson();
     });
-    // Search input (ensure it's an input)
     if (inputeSearch) {
         inputeSearch.addEventListener('input', () => {
             const valeuInput = inputeSearch.value.trim();
@@ -60,5 +54,4 @@ function initApp() {
         });
     }
 }
-/* Auto-run init */
 initApp();

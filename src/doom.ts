@@ -1,9 +1,6 @@
 import { Experience, PersonProfile } from './model'
-import { createProfile, listPerson, checkImageURL, addToZone, canAccess } from './model.js'
+import { createProfile, getListPerson, checkImageURL, addToZone, canAccess } from './model.js'
 
-/**
- * Helper DOM utilities
- */
 function getEl<T extends HTMLElement = HTMLElement>(selector: string): T | null {
     return document.querySelector(selector) as T | null;
 }
@@ -18,9 +15,7 @@ function hideEl(el: HTMLElement | null) {
     el.classList.add('hidden');
 }
 
-/**
- * UI: form show/hide
- */
+
 export function aficherForemAjouterPerson() {
     const AjouterData = getEl<HTMLDivElement>('#AjouterData');
     showEl(AjouterData);
@@ -30,9 +25,6 @@ export function closeForemAjouterPerson() {
     hideEl(AjouterData);
 }
 
-/**
- * Experiences: add new experience block
- */
 const experiencesContainer = getEl<HTMLDivElement>('#experiencesContainer');
 export function addExperions() {
     if (!experiencesContainer) return;
@@ -40,7 +32,6 @@ export function addExperions() {
     const expDiv = document.createElement('div');
     expDiv.className = 'flex flex-col gap-2 border p-2 rounded-lg bg-gray-50';
 
-    // Build content and attach event listener for the remove button (avoid inline onclick)
     expDiv.innerHTML = `
         <div class="space-y-4 relative p-10 border-2 rounded-2xl experience-item">
             <button type="button" class="remove-btn absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg">
@@ -63,19 +54,15 @@ export function addExperions() {
             </div>
         </div>`;
 
-    // Attach listener for remove button
     expDiv.querySelector('.remove-btn')?.addEventListener('click', (e) => {
         const target = (e.currentTarget as HTMLElement);
-        // remove the outer wrapper (expDiv)
         expDiv.remove();
     });
 
     experiencesContainer.appendChild(expDiv);
 }
 
-/**
- * Error toast with progress bar
- */
+
 function erroreMessage(message: string) {
     const nodeErrore = document.createElement('div');
     nodeErrore.className =
@@ -97,9 +84,7 @@ function erroreMessage(message: string) {
     }, 50);
 }
 
-/**
- * Create a small profile card used in lists
- */
+
 function createProfileCard(person: PersonProfile): HTMLDivElement {
     const profile = document.createElement('div') as HTMLDivElement;
     profile.className = 'cursor-pointer';
@@ -112,24 +97,21 @@ function createProfileCard(person: PersonProfile): HTMLDivElement {
     return profile;
 }
 
-/**
- * Generic render function for person lists
- */
+
 function renderPersonList(
     persons: PersonProfile[],
     options?: {
         titleText?: string,
-        containerSelector?: string,
         showDeleteFilterBtn?: boolean
     }
 ) {
-    const container = getEl<HTMLDivElement>(options?.containerSelector ?? '#listPersonElemnt');
+    const container = getEl<HTMLDivElement>('#listPersonElemnt');
     if (!container) return;
 
     if (options?.showDeleteFilterBtn === false) {
-        getEl('#deleteFiltrage')?.classList.add('hidden');
+        hideEl(getEl('#deleteFiltrage'))
     } else {
-        getEl('#deleteFiltrage')?.classList.remove('hidden');
+        showEl(getEl('#deleteFiltrage'))
     }
 
     const titeLiset = container.previousElementSibling?.querySelector('h2') as HTMLElement | null;
@@ -141,16 +123,13 @@ function renderPersonList(
 
     container.innerHTML = '';
     persons.forEach((person) => {
-        // Show only those inside "sonZon" as original code did in several places
         if (person.location === 'sonZon') {
             container.appendChild(createProfileCard(person));
         }
     });
 }
 
-/**
- * Build and validate profile data from the form and create a new profile
- */
+
 export async function getProfileData() {
     const nomInput = getEl<HTMLInputElement>('#nom');
     const roleInput = getEl<HTMLInputElement>('#role');
@@ -231,7 +210,7 @@ export async function getProfileData() {
     if (!valideExperrionce) return false;
 
     const p: PersonProfile = {
-        id: listPerson.length,
+        id: getListPerson().length,
         nom,
         role,
         email,
@@ -246,24 +225,17 @@ export async function getProfileData() {
     return true;
 }
 
-/**
- * Public list renderers (kept API names similar to original)
- */
+
 export function afficherLesPerson() {
-    // render only persons in 'sonZon'
-    renderPersonList(listPerson, { titleText: 'liste Person', showDeleteFilterBtn: false });
+    renderPersonList(getListPerson(), { titleText: 'liste Person', showDeleteFilterBtn: false });
 }
 
 export function afficherLesPersonRocherch(listRocherche: PersonProfile[]) {
-    // keep same behavior: filter for sonZon
     renderPersonList(listRocherche, { titleText: 'liste Person', showDeleteFilterBtn: false });
 }
 
-/**
- * Show filtered list for adding to a zone
- */
+
 function afficherLesPersonFiltred(persons: PersonProfile[], zoneName: string) {
-    // we want to show persons that are NOT already in the target zone (original logic)
     getEl('#deleteFiltrage')?.classList.remove('hidden');
     const container = getEl<HTMLDivElement>('#listPersonElemnt');
     if (!container) return;
@@ -295,19 +267,15 @@ function afficherLesPersonFiltred(persons: PersonProfile[], zoneName: string) {
     });
 }
 
-/**
- * Called when user wants to add to zone (wired in markup originally)
- */
+
 export function ajouterToZone(Elemet: Element) {
     const parentElement = Elemet.closest('.zone') as HTMLElement | null;
     const zoneName = parentElement?.id ?? '';
-    const listCorrect = listPerson.filter((person) => canAccess(person, zoneName));
+    const listCorrect = getListPerson().filter((person) => canAccess(person, zoneName));
     afficherLesPersonFiltred(listCorrect, zoneName || 'empty');
 }
 
-/**
- * Re-render persons placed in zones
- */
+
 function createZonePersonItem(p: PersonProfile) {
     const personContainer = document.createElement('div');
     personContainer.className =
@@ -339,7 +307,7 @@ function gereZoneBackgrouned() {
         personnel: 0,
     };
 
-    listPerson.forEach((p) => {
+    getListPerson().forEach((p) => {
         if (p.location in Ozone) Ozone[p.location]++;
     });
 
@@ -358,7 +326,7 @@ function gereZoneBackgrouned() {
 function afficherLesPersontoZone() {
     document.querySelectorAll('.person-item').forEach(e => e.remove());
 
-    listPerson.forEach((p) => {
+    getListPerson().forEach((p) => {
         const zon = getEl<HTMLDivElement>(`#${p.location}`);
         if (!zon) return;
 
@@ -371,15 +339,12 @@ function afficherLesPersontoZone() {
         }
     });
 
-    // Also refresh the main list on the right
     afficherLesPerson();
 }
 
-/**
- * Popup detail view for a person
- */
+
 function afficherPopupPerson(idPerson: number) {
-    const person = listPerson.find(p => p.id === idPerson);
+    const person = getListPerson().find(p => p.id === idPerson);
     if (!person) {
         console.warn('Personne introuvable');
         return;
@@ -458,12 +423,10 @@ function afficherPopupPerson(idPerson: number) {
     }, 10);
 }
 
-/**
- * Simple search function (kept original behavior)
- */
+
 export function rocherch(valeuInput: string) {
-    const listName: PersonProfile[] = listPerson.filter((person) => person.nom.startsWith(valeuInput));
-    const listRole: PersonProfile[] = listPerson.filter((person) => person.role.startsWith(valeuInput));
+    const listName: PersonProfile[] = getListPerson().filter((person) => person.nom.startsWith(valeuInput));
+    const listRole: PersonProfile[] = getListPerson().filter((person) => person.role.startsWith(valeuInput));
     const listFinal = [...listName, ...listRole];
     const uniqueList = [...new Map(listFinal.map(item => [item.id, item])).values()];
     afficherLesPersonRocherch(uniqueList);
