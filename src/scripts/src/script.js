@@ -8,12 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var _a;
-import { aficherForemAjouterPerson, closeForemAjouterPerson, addExperions, getProfileData, afficherLesPerson, ajouterToZone } from './doom.js';
+import { aficherForemAjouterPerson, closeForemAjouterPerson, addExperions, getProfileData, afficherLesPerson, ajouterToZone, rocherch } from './doom.js';
+import { listPerson } from './model.js';
 let addPerson = document.querySelector("#addProfile");
 let closseForet = document.querySelector("#closeIcone");
 let addExperienceBtn = document.querySelector("#addExperienceBtn");
 let profileForm = document.querySelector("#profileForm");
 let AddtoZone = document.querySelectorAll("#AjouterToZone");
+let inputeSearch = document.querySelector("#paretRocherche");
+let listP = listPerson;
 addPerson.addEventListener("click", () => aficherForemAjouterPerson());
 closseForet.addEventListener("click", () => closeForemAjouterPerson());
 addExperienceBtn.addEventListener("click", () => addExperions());
@@ -32,4 +35,8 @@ Array.from(AddtoZone).forEach((elemet) => {
 });
 (_a = document.querySelector("#deleteFiltrage")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
     afficherLesPerson();
+});
+inputeSearch === null || inputeSearch === void 0 ? void 0 : inputeSearch.addEventListener("input", () => {
+    const valeuInput = inputeSearch.value;
+    rocherch(valeuInput);
 });

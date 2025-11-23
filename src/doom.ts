@@ -441,5 +441,42 @@ function afficherPopupPerson(idPerson: number) {
     }, 10);
 }
 
+export function afficherLesPersonRocherch(listRocherche:PersonProfile[]) {
+    let listPersonElemnt = document.querySelector("#listPersonElemnt") as HTMLDivElement
+    document.querySelector("#deleteFiltrage")?.classList.add("hidden")
+    const titeLiset = listPersonElemnt.previousElementSibling?.querySelector("h2") as HTMLElement | null;
 
+    if (titeLiset) {
+        titeLiset.textContent = `liste Person`;
+    }
+    listPersonElemnt.innerHTML = ""
+    listRocherche.filter((p) => p.location == "sonZon").forEach((person) => {
+        let profile = document.createElement("div") as HTMLDivElement;
 
+        profile.innerHTML = `<div class="flex flex-col items-center cursor-pointer lg:flex-row lg:justify-around lg:bg-[#a2d6f9] lg:gap-2 lg:p-2 lg:rounded-[10px] ">
+                    <img src="${person.photoUrl}" class="w-9 h-9  lg:w-15 lg:h-15 rounded-full border  object-cover shadow" />
+                    <p class="font-medium text-gray-700 truncate w-20 lg:w-30 lg:text-2xl">${person.nom}</p>
+                </div>`
+        profile.addEventListener("click", () => {
+            afficherPopupPerson(person.id)
+        })
+        listPersonElemnt.appendChild(profile)
+    })
+}
+
+export function rocherch(valeuInput: string) {
+
+    let listName: PersonProfile[] = listPerson.filter((person) => {
+        return person.nom.startsWith(valeuInput);
+    });
+
+    
+    let listRole: PersonProfile[] = listPerson.filter((person) => {
+        return person.role.startsWith(valeuInput);
+    });
+
+    let listFinal = [...listName, ...listRole];
+    let uniqueList = [...new Map(listFinal.map(item => [item.id, item])).values()];
+
+    afficherLesPersonRocherch(uniqueList);
+}
