@@ -1,8 +1,7 @@
 import { Experience, PersonProfile } from './model'
 import { createProfile, listPerson, checkImageURL, addToZone, canAccess } from './model.js'
 
-export function aficherForemAjouterPerson() 
-{
+export function aficherForemAjouterPerson() {
     const AjouterData = document.querySelector("#AjouterData") as HTMLDivElement;
 
     if (!AjouterData) return;
@@ -11,8 +10,7 @@ export function aficherForemAjouterPerson()
     AjouterData.classList.add("flex");
 }
 
-export function closeForemAjouterPerson() 
-{
+export function closeForemAjouterPerson() {
     const AjouterData = document.querySelector("#AjouterData") as HTMLDivElement;
 
     if (!AjouterData) return;
@@ -23,8 +21,7 @@ export function closeForemAjouterPerson()
 
 const experiencesContainer = document.getElementById("experiencesContainer") as HTMLFormElement;
 
-export function addExperions() 
-{
+export function addExperions() {
     const expDiv = document.createElement("div");
     expDiv.className = "flex flex-col gap-2 border p-2 rounded-lg bg-gray-50";
     expDiv.innerHTML = `
@@ -53,8 +50,7 @@ export function addExperions()
     experiencesContainer.appendChild(expDiv);
 }
 
-export async function getProfileData() 
-{
+export async function getProfileData() {
     const nomInput = document.getElementById("nom") as HTMLInputElement;
     const roleInput = document.getElementById("role") as HTMLInputElement;
     const emailInput = document.getElementById("email") as HTMLInputElement;
@@ -86,25 +82,58 @@ export async function getProfileData()
     }
 
     if (!/^\d{10}$/.test(telephone)) {
-    erroreMessage("Téléphone doit contenir 10 chiffres");
-    telInput.focus();
-    return false;
-}
+        erroreMessage("Téléphone doit contenir 10 chiffres");
+        telInput.focus();
+        return false;
+    }
 
     const isValid = await checkImageURL(photoUrl);
     const image = isValid ? photoUrl : "../media/profileVide.jpg";
     const experiences: Experience[] = [];
     const experienceElems = document.querySelectorAll("#experience-item");
 
+    const today = new Date().toISOString().split("T")[0]; 
+
+    let valideExperrionce = true
     experienceElems.forEach((expElem) => {
-        const company = (expElem.querySelector("#company") as HTMLInputElement).value || "";
-        const position = (expElem.querySelector("#position") as HTMLInputElement).value || "";
-        const startDate = (expElem.querySelector("#startDate") as HTMLInputElement).value || "";
+        const company = (expElem.querySelector("#company") as HTMLInputElement).value.trim() || "";
+        const position = (expElem.querySelector("#position") as HTMLInputElement).value.trim() || "";
+        const startDate = (expElem.querySelector("#startDate") as HTMLInputElement).value;
         const endDate = (expElem.querySelector("#endDate") as HTMLInputElement)?.value || "";
-        const description = (expElem.querySelector("#description") as HTMLInputElement)?.value || "";
+        const description = (expElem.querySelector("#description") as HTMLInputElement)?.value.trim() || "";
+
+       
+        if (!startDate) {
+            erroreMessage("Date de début est obligatoire");
+            valideExperrionce = false ;
+            return false;
+        }
+
+        if (startDate > today) {
+            erroreMessage(`La date de début ${startDate} ne peut pas être dans le futur`);
+            valideExperrionce = false ;
+            return false;
+        }
+
+        if (endDate) {
+            if (endDate > today) {
+                erroreMessage(`La date de fin ${endDate} ne peut pas être dans le futur`);
+                valideExperrionce = false ;
+                return false;
+            }
+            if (endDate < startDate) {
+                erroreMessage(`La date de fin ${endDate} ne peut pas être avant la date de début ${startDate}`);
+                valideExperrionce = false ;
+                return false;
+            }
+        }
+
         experiences.push({ company, position, startDate, endDate, description });
-        return true;
     });
+    if (!valideExperrionce) {
+        return false
+    }
+
 
     const p: PersonProfile = {
         id: listPerson.length,
@@ -138,7 +167,7 @@ export function afficherLesPerson() {
                     <img src="${person.photoUrl}" class="w-9 h-9  lg:w-15 lg:h-15 rounded-full border  object-cover shadow" />
                     <p class="font-medium text-gray-700 truncate w-20 lg:w-30 lg:text-2xl">${person.nom}</p>
                 </div>`
-        profile.addEventListener("click",()=>{
+        profile.addEventListener("click", () => {
             afficherPopupPerson(person.id)
         })
         listPersonElemnt.appendChild(profile)
@@ -165,7 +194,7 @@ function afficherLesPersonFiltred(listPerson: PersonProfile[], zoneName: string)
         if (person.location != zoneName) {
             let profile = document.createElement("div");
 
-        profile.innerHTML = `
+            profile.innerHTML = `
             <div class="flex flex-col items-center cursor-pointer 
                 lg:flex-row lg:justify-around lg:bg-[#a2d6f9] lg:gap-2 lg:p-2 lg:rounded-[10px]">
                 <img src="${person.photoUrl}" class="w-9 h-9 lg:w-15 lg:h-15 rounded-full border object-cover shadow" />
@@ -174,28 +203,28 @@ function afficherLesPersonFiltred(listPerson: PersonProfile[], zoneName: string)
                 </p>
             </div>`;
 
-        profile.addEventListener("click", () => {
+            profile.addEventListener("click", () => {
 
 
-            let zon = document.querySelector(`#${zoneName}`) as HTMLDivElement | null;
+                let zon = document.querySelector(`#${zoneName}`) as HTMLDivElement | null;
 
-            if (!zon) {
-                console.error("Zone introuvable dans le DOM :", zoneName);
-                return;
-            }
+                if (!zon) {
+                    console.error("Zone introuvable dans le DOM :", zoneName);
+                    return;
+                }
 
-            if (addToZone(person.id, zoneName)) {
+                if (addToZone(person.id, zoneName)) {
 
-                afficherLesPersontoZone()
+                    afficherLesPersontoZone()
 
-            }
-        });
+                }
+            });
 
-        listPersonElemnt.appendChild(profile);
-    }
+            listPersonElemnt.appendChild(profile);
+        }
     });
-        
-        
+
+
 }
 
 
@@ -251,7 +280,7 @@ function afficherLesPersontoZone() {
         let zon = document.querySelector(`#${p.location}`) as HTMLDivElement;
         if (!zon) return;
 
-        
+
         let personContainer = document.createElement("div");
         personContainer.className =
             "person-item flex flex-col  justify-around items-center w-[45%] md:w-[22%] max-w-[120px] mb-3";
@@ -267,7 +296,7 @@ function afficherLesPersontoZone() {
 
         personContainer.appendChild(img);
         personContainer.appendChild(name);
-        personContainer.addEventListener("click" , ()=>{
+        personContainer.addEventListener("click", () => {
             afficherPopupPerson(p.id)
         })
 
@@ -303,9 +332,9 @@ function gereZoneBackgrouned() {
 
         if (Ozone[zoneName] > 0) {
             zoneEl.classList.remove("bg-red-300/60");
-        } else if (Ozone[zoneName] >= 4){
+        } else if (Ozone[zoneName] >= 4) {
 
-        }else {
+        } else {
             zoneEl.classList.add("bg-red-300/60");
         }
     });
@@ -329,7 +358,7 @@ function afficherPopupPerson(idPerson: number) {
             <div id="popupContent" class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl"></div>
         `;
         document.body.appendChild(popup);
-        
+
 
         popup.addEventListener("click", (e) => {
             if (e.target === popup) popup.remove();
@@ -396,14 +425,14 @@ function afficherPopupPerson(idPerson: number) {
         </div>
     `;
 
-  
+
     content.querySelector("#closePopup")?.addEventListener("click", () => {
         popup.remove();
     });
 
 
     popup.classList.remove("hidden");
-    
+
 
     popup.style.opacity = "0";
     setTimeout(() => {
