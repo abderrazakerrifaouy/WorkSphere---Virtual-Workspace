@@ -7,36 +7,65 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var _a;
 import { aficherForemAjouterPerson, closeForemAjouterPerson, addExperions, getProfileData, afficherLesPerson, ajouterToZone, rocherch } from './doom.js';
-import { listPerson } from './model.js';
-let addPerson = document.querySelector("#addProfile");
-let closseForet = document.querySelector("#closeIcone");
-let addExperienceBtn = document.querySelector("#addExperienceBtn");
-let profileForm = document.querySelector("#profileForm");
-let AddtoZone = document.querySelectorAll("#AjouterToZone");
-let inputeSearch = document.querySelector("#paretRocherche");
-let listP = listPerson;
-addPerson.addEventListener("click", () => aficherForemAjouterPerson());
-closseForet.addEventListener("click", () => closeForemAjouterPerson());
-addExperienceBtn.addEventListener("click", () => addExperions());
-afficherLesPerson();
-profileForm.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
-    e.preventDefault();
-    const isValid = yield getProfileData();
-    console.log(isValid);
-    if (isValid) {
-        closeForemAjouterPerson();
-        profileForm.reset();
-    }
-}));
-Array.from(AddtoZone).forEach((elemet) => {
-    elemet.addEventListener("click", () => ajouterToZone(elemet));
-});
-(_a = document.querySelector("#deleteFiltrage")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
+import { getListPerson } from './model.js';
+function q(sel) {
+    return document.querySelector(sel);
+}
+function qAll(sel) {
+    return document.querySelectorAll(sel);
+}
+function initApp() {
+    var _a;
+    const addPerson = q('#addProfile');
+    const closseForet = q('#closeIcone');
+    const addExperienceBtn = q('#addExperienceBtn');
+    const profileForm = q('#profileForm');
+    const AddtoZone = qAll('#AjouterToZone');
+    const inputeSearch = q('#paretRocherche');
+    addPerson === null || addPerson === void 0 ? void 0 : addPerson.addEventListener('click', () => aficherForemAjouterPerson());
+    closseForet === null || closseForet === void 0 ? void 0 : closseForet.addEventListener('click', () => closeForemAjouterPerson());
+    addExperienceBtn === null || addExperienceBtn === void 0 ? void 0 : addExperienceBtn.addEventListener('click', () => addExperions());
     afficherLesPerson();
-});
-inputeSearch === null || inputeSearch === void 0 ? void 0 : inputeSearch.addEventListener("input", () => {
-    const valeuInput = inputeSearch.value;
-    rocherch(valeuInput);
-});
+    profileForm === null || profileForm === void 0 ? void 0 : profileForm.addEventListener('submit', (e) => __awaiter(this, void 0, void 0, function* () {
+        e.preventDefault();
+        const isValid = yield getProfileData();
+        console.log('profile valid?', isValid);
+        if (isValid) {
+            closeForemAjouterPerson();
+            profileForm.reset();
+        }
+    }));
+    if (AddtoZone && AddtoZone.length > 0) {
+        AddtoZone.forEach((elemet) => {
+            elemet.addEventListener('click', () => ajouterToZone(elemet));
+        });
+    }
+    (_a = q('#deleteFiltrage')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => {
+        afficherLesPerson();
+    });
+    if (inputeSearch) {
+        inputeSearch.addEventListener('input', () => {
+            const valeuInput = inputeSearch.value.trim();
+            rocherch(valeuInput);
+        });
+    }
+}
+function loadProfiles() {
+    try {
+        const raw = localStorage.getItem("Profiles");
+        // ila ma kaynach data or raw = null
+        if (!raw)
+            return [];
+        const list = JSON.parse(raw);
+        // ila jat parsed w maشي array, nرجعو array
+        return Array.isArray(list) ? list : [];
+    }
+    catch (error) {
+        console.error("Error reading localStorage:", error);
+        return [];
+    }
+}
+let listPerso = getListPerson();
+listPerso = [...loadProfiles()];
+initApp();

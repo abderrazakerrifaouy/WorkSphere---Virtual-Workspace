@@ -1,22 +1,37 @@
 export let listPerson = [];
+//window.listPerson = listPerson;
+export function getListPerson() {
+    return listPerson;
+}
+function getDataLocalStorage() {
+    let data = localStorage.getItem("Profiles") || '[]';
+    listPerson = JSON.parse(data);
+}
+function saveListPersonToStorage(key = 'Profiles') {
+    try {
+        localStorage.setItem(key, JSON.stringify(listPerson));
+    }
+    catch (err) {
+        console.error('Failed to save Profiles to localStorage', err);
+    }
+}
 export function createProfile(person) {
     return listPerson.push(person);
+    saveListPersonToStorage();
 }
 export function canAccess(person, zone) {
     const role = person.role;
+    if (role === "Manager")
+        return true;
     switch (zone) {
+        case "reception":
+            return role === "Réceptionniste";
         case "serveurs":
-            return (role === "Technicien IT" ||
-                role === "Manager" ||
-                role === "Nettoyage");
+            return role === "Technicien IT";
         case "securite":
-            return (role === "Agent de sécurité" ||
-                role === "Manager" ||
-                role === "Nettoyage");
+            return role === "Agent de sécurité";
         case "archives":
-            return (role === "Agent de sécurité" ||
-                role === "Manager" ||
-                role === "Technicien IT");
+            return false;
         default:
             return true;
     }
@@ -33,6 +48,7 @@ export function addToZone(personId, zoneName) {
         return false;
     }
     person.location = zoneName;
+    saveListPersonToStorage();
     return true;
 }
 export function checkImageURL(url) {
