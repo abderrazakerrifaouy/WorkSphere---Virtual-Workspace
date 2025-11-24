@@ -1,5 +1,5 @@
-import { aficherForemAjouterPerson, closeForemAjouterPerson, addExperions, getProfileData, afficherLesPerson, ajouterToZone, rocherch } from './doom.js'
-import { getListPerson, listPerson } from './model.js'
+import { aficherForemAjouterPerson, closeForemAjouterPerson, addExperions, getProfileData, afficherLesPerson, ajouterToZone, rocherch , afficherLesPersontoZone} from './doom.js'
+import {stListPerson} from './model.js'
 
 
 
@@ -56,13 +56,9 @@ function initApp() {
 function loadProfiles() {
     try {
         const raw = localStorage.getItem("Profiles");
-        
-        // ila ma kaynach data or raw = null
         if (!raw) return [];
 
         const list = JSON.parse(raw);
-
-        // ila jat parsed w maشي array, nرجعو array
         return Array.isArray(list) ? list : [];
         
     } catch (error) {
@@ -70,9 +66,9 @@ function loadProfiles() {
         return [];
     }
 }
-let listPerso = getListPerson()
- listPerso = [...loadProfiles()]
 
+stListPerson(loadProfiles())
+afficherLesPersontoZone()
 
 
 initApp()

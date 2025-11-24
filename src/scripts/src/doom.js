@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { createProfile, getListPerson, checkImageURL, addToZone, canAccess } from './model.js';
+import { createProfile, getListPerson, checkImageURL, addToZone, canAccess, saveListPersonToStorage } from './model.js';
 function getEl(selector) {
     return document.querySelector(selector);
 }
@@ -280,6 +280,7 @@ function createZonePersonItem(p) {
         e.stopPropagation();
         let indexP = getListPerson().indexOf(p);
         getListPerson()[indexP].location = "sonZon";
+        saveListPersonToStorage();
         afficherLesPersontoZone();
     });
     personContainer.appendChild(deletElement);
@@ -310,7 +311,7 @@ function gereZoneBackgrouned() {
         }
     });
 }
-function afficherLesPersontoZone() {
+export function afficherLesPersontoZone() {
     document.querySelectorAll('.person-item').forEach(e => e.remove());
     getListPerson().forEach((p) => {
         const zon = getEl(`#${p.location}`);

@@ -3,11 +3,10 @@ export let listPerson = [];
 export function getListPerson() {
     return listPerson;
 }
-function getDataLocalStorage() {
-    let data = localStorage.getItem("Profiles") || '[]';
-    listPerson = JSON.parse(data);
+export function stListPerson(list) {
+    listPerson.push(...list);
 }
-function saveListPersonToStorage(key = 'Profiles') {
+export function saveListPersonToStorage(key = 'Profiles') {
     try {
         localStorage.setItem(key, JSON.stringify(listPerson));
     }
@@ -16,8 +15,8 @@ function saveListPersonToStorage(key = 'Profiles') {
     }
 }
 export function createProfile(person) {
-    return listPerson.push(person);
     saveListPersonToStorage();
+    return listPerson.push(person);
 }
 export function canAccess(person, zone) {
     const role = person.role;

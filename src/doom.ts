@@ -1,5 +1,5 @@
 import { Experience, PersonProfile } from './model'
-import { createProfile, getListPerson, checkImageURL, addToZone, canAccess } from './model.js'
+import { createProfile, getListPerson, checkImageURL, addToZone, canAccess , saveListPersonToStorage } from './model.js'
 
 function getEl<T extends HTMLElement = HTMLElement>(selector: string): T | null {
     return document.querySelector(selector) as T | null;
@@ -305,6 +305,7 @@ function createZonePersonItem(p: PersonProfile) {
         e.stopPropagation()
         let indexP = getListPerson().indexOf(p)
         getListPerson()[indexP].location = "sonZon";
+        saveListPersonToStorage()
         afficherLesPersontoZone()
     })
     personContainer.appendChild(deletElement)
@@ -338,7 +339,7 @@ function gereZoneBackgrouned() {
     });
 }
 
-function afficherLesPersontoZone() {
+export function afficherLesPersontoZone() {
     document.querySelectorAll('.person-item').forEach(e => e.remove());
 
     getListPerson().forEach((p) => {

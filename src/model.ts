@@ -20,17 +20,18 @@ export interface PersonProfile {
 export let listPerson: PersonProfile[] = [];
 //window.listPerson = listPerson;
 
+
+
+
 export function getListPerson() {
   return listPerson
 }
 
-function getDataLocalStorage(){
-  let data = localStorage.getItem("Profiles") || '[]'
-  listPerson = JSON.parse(data)
-  
+export function stListPerson(list:PersonProfile[]){
+  listPerson.push(...list);
 }
 
-function saveListPersonToStorage(key = 'Profiles') {
+export function saveListPersonToStorage(key = 'Profiles') {
   try {
     localStorage.setItem(key, JSON.stringify(listPerson))
   } catch (err) {
@@ -39,8 +40,8 @@ function saveListPersonToStorage(key = 'Profiles') {
 }
 
 export function createProfile(person: PersonProfile): number {
-  return listPerson.push(person);
   saveListPersonToStorage()
+  return listPerson.push(person);
 }
 
 
