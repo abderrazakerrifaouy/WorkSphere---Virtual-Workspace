@@ -8,29 +8,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { aficherForemAjouterPerson, closeForemAjouterPerson, addExperions, getProfileData, afficherLesPerson, ajouterToZone, rocherch } from './doom.js';
+import { getListPerson } from './model.js';
 function q(sel) {
     return document.querySelector(sel);
 }
 function qAll(sel) {
     return document.querySelectorAll(sel);
 }
-function on(el, ev, cb) {
-    if (!el)
-        return;
-    el.addEventListener(ev, cb);
-}
 function initApp() {
+    var _a;
     const addPerson = q('#addProfile');
     const closseForet = q('#closeIcone');
     const addExperienceBtn = q('#addExperienceBtn');
     const profileForm = q('#profileForm');
     const AddtoZone = qAll('#AjouterToZone');
     const inputeSearch = q('#paretRocherche');
-    on(addPerson, 'click', () => aficherForemAjouterPerson());
-    on(closseForet, 'click', () => closeForemAjouterPerson());
-    on(addExperienceBtn, 'click', () => addExperions());
+    addPerson === null || addPerson === void 0 ? void 0 : addPerson.addEventListener('click', () => aficherForemAjouterPerson());
+    closseForet === null || closseForet === void 0 ? void 0 : closseForet.addEventListener('click', () => closeForemAjouterPerson());
+    addExperienceBtn === null || addExperienceBtn === void 0 ? void 0 : addExperienceBtn.addEventListener('click', () => addExperions());
     afficherLesPerson();
-    on(profileForm, 'submit', (e) => __awaiter(this, void 0, void 0, function* () {
+    profileForm === null || profileForm === void 0 ? void 0 : profileForm.addEventListener('submit', (e) => __awaiter(this, void 0, void 0, function* () {
         e.preventDefault();
         const isValid = yield getProfileData();
         console.log('profile valid?', isValid);
@@ -44,7 +41,7 @@ function initApp() {
             elemet.addEventListener('click', () => ajouterToZone(elemet));
         });
     }
-    on(q('#deleteFiltrage'), 'click', () => {
+    (_a = q('#deleteFiltrage')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => {
         afficherLesPerson();
     });
     if (inputeSearch) {
@@ -54,4 +51,21 @@ function initApp() {
         });
     }
 }
+function loadProfiles() {
+    try {
+        const raw = localStorage.getItem("Profiles");
+        // ila ma kaynach data or raw = null
+        if (!raw)
+            return [];
+        const list = JSON.parse(raw);
+        // ila jat parsed w maشي array, nرجعو array
+        return Array.isArray(list) ? list : [];
+    }
+    catch (error) {
+        console.error("Error reading localStorage:", error);
+        return [];
+    }
+}
+let listPerso = getListPerson();
+listPerso = [...loadProfiles()];
 initApp();

@@ -1,5 +1,5 @@
 import { aficherForemAjouterPerson, closeForemAjouterPerson, addExperions, getProfileData, afficherLesPerson, ajouterToZone, rocherch } from './doom.js'
-import { getListPerson } from './model.js'
+import { getListPerson, listPerson } from './model.js'
 
 
 
@@ -9,10 +9,7 @@ function q<T extends HTMLElement = HTMLElement>(sel: string): T | null {
 function qAll(sel: string): NodeListOf<Element> {
   return document.querySelectorAll(sel)
 }
-function on<E extends Event = Event>(el: Element | null, ev: string, cb: (e: E) => any) {
-  if (!el) return
-  el.addEventListener(ev, cb as EventListener)
-}
+
 
 function initApp() {
   const addPerson = q<HTMLButtonElement>('#addProfile')
@@ -22,13 +19,13 @@ function initApp() {
   const AddtoZone = qAll('#AjouterToZone') 
   const inputeSearch = q<HTMLInputElement>('#paretRocherche')
 
-  on(addPerson, 'click', () => aficherForemAjouterPerson())
-  on(closseForet, 'click', () => closeForemAjouterPerson())
-  on(addExperienceBtn, 'click', () => addExperions())
+  addPerson?.addEventListener('click', () => aficherForemAjouterPerson())
+  closseForet?.addEventListener('click', () => closeForemAjouterPerson())
+  addExperienceBtn?.addEventListener('click', () => addExperions())
 
   afficherLesPerson()
 
-  on(profileForm, 'submit', async (e) => {
+  profileForm?.addEventListener('submit', async (e) => {
     e.preventDefault()
     const isValid = await getProfileData()
     console.log('profile valid?', isValid)
@@ -44,7 +41,7 @@ function initApp() {
     })
   }
 
-  on(q('#deleteFiltrage'), 'click', () => {
+  q('#deleteFiltrage')?.addEventListener('click', () => {
     afficherLesPerson()
   })
 
@@ -55,6 +52,26 @@ function initApp() {
     })
   }
 }
+
+function loadProfiles() {
+    try {
+        const raw = localStorage.getItem("Profiles");
+        
+        // ila ma kaynach data or raw = null
+        if (!raw) return [];
+
+        const list = JSON.parse(raw);
+
+        // ila jat parsed w maشي array, nرجعو array
+        return Array.isArray(list) ? list : [];
+        
+    } catch (error) {
+        console.error("Error reading localStorage:", error);
+        return [];
+    }
+}
+let listPerso = getListPerson()
+ listPerso = [...loadProfiles()]
 
 
 

@@ -279,7 +279,7 @@ export function ajouterToZone(Elemet: Element) {
 function createZonePersonItem(p: PersonProfile) {
     const personContainer = document.createElement('div');
     personContainer.className =
-        'person-item flex flex-col justify-around items-center w-[45%] md:w-[22%] max-w-[120px] mb-3';
+        'person-item flex flex-col justify-around items-center w-[45%] md:w-[22%] max-w-[120px] mb-3 relative';
 
     const img = document.createElement('div');
     img.className =
@@ -287,12 +287,27 @@ function createZonePersonItem(p: PersonProfile) {
     img.style.backgroundImage = `url(${p.photoUrl})`;
 
     const name = document.createElement('p');
-    name.className = 'text-white font-bold text-center text-sm mt-1';
+    name.className = 'text-white font-bold text-center text-sm mt-1 ';
     name.textContent = p.nom;
 
     personContainer.appendChild(img);
     personContainer.appendChild(name);
     personContainer.addEventListener('click', () => afficherPopupPerson(p.id));
+    let deletElement = document.createElement('button');
+    deletElement.className = "absolute top-0 -right-2 w-5 h-5 z-10 flex items-center justify-center bg-red-500 text-white rounded-full shadow-lg";
+    deletElement.innerHTML = `
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            `;
+    deletElement.addEventListener("click",(e)=>{
+        e.stopPropagation()
+        let indexP = getListPerson().indexOf(p)
+        getListPerson()[indexP].location = "sonZon";
+        afficherLesPersontoZone()
+    })
+    personContainer.appendChild(deletElement)
 
     return personContainer;
 }
