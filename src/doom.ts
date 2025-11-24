@@ -366,7 +366,7 @@ function afficherPopupPerson(idPerson: number) {
 
     const content = popup.querySelector('#popupContent') as HTMLDivElement;
     const expHtml = (person.experiences || []).map(exp => `
-        <div class="bg-linear-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-4 rounded-lg mb-3 hover:shadow-md transition-shadow">
+        <div class="bg-linear-to-r from-blue-50 to-indigo-50  p-4 rounded-lg mb-3 hover:shadow-md transition-shadow">
             <h3 class="font-bold text-lg text-gray-800">${exp.company}</h3>
             <p class="text-blue-600 font-medium">${exp.position}</p>
             <p class="text-sm text-gray-500 mt-1">
@@ -394,6 +394,10 @@ function afficherPopupPerson(idPerson: number) {
                     <div class="flex items-center gap-2">
                         <span class="text-gray-600">Téléphone :</span>
                         <span class="font-medium">${person.telephone ?? '—'}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-gray-600">location :</span>
+                        <span class="font-medium">${person.location ?? '—'}</span>
                     </div>
                 </div>
 

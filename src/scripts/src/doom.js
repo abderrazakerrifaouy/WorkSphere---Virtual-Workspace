@@ -311,7 +311,7 @@ function afficherLesPersontoZone() {
     afficherLesPerson();
 }
 function afficherPopupPerson(idPerson) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e;
     const person = getListPerson().find(p => p.id === idPerson);
     if (!person) {
         console.warn('Personne introuvable');
@@ -335,7 +335,7 @@ function afficherPopupPerson(idPerson) {
     const expHtml = (person.experiences || []).map(exp => {
         var _a;
         return `
-        <div class="bg-linear-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-4 rounded-lg mb-3 hover:shadow-md transition-shadow">
+        <div class="bg-linear-to-r from-blue-50 to-indigo-50  p-4 rounded-lg mb-3 hover:shadow-md transition-shadow">
             <h3 class="font-bold text-lg text-gray-800">${exp.company}</h3>
             <p class="text-blue-600 font-medium">${exp.position}</p>
             <p class="text-sm text-gray-500 mt-1">
@@ -364,6 +364,10 @@ function afficherPopupPerson(idPerson) {
                         <span class="text-gray-600">Téléphone :</span>
                         <span class="font-medium">${(_c = person.telephone) !== null && _c !== void 0 ? _c : '—'}</span>
                     </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-gray-600">location :</span>
+                        <span class="font-medium">${(_d = person.location) !== null && _d !== void 0 ? _d : '—'}</span>
+                    </div>
                 </div>
 
                 <div>
@@ -381,7 +385,7 @@ function afficherPopupPerson(idPerson) {
             </div>
         </div>
     `;
-    (_d = content.querySelector('#closePopup')) === null || _d === void 0 ? void 0 : _d.addEventListener('click', () => popup === null || popup === void 0 ? void 0 : popup.remove());
+    (_e = content.querySelector('#closePopup')) === null || _e === void 0 ? void 0 : _e.addEventListener('click', () => popup === null || popup === void 0 ? void 0 : popup.remove());
     popup.classList.remove('hidden');
     popup.style.opacity = '0';
     setTimeout(() => {
